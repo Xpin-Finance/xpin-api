@@ -1,6 +1,6 @@
-# panther-api
+# pyro-api
 
-Set of endpoints utilities for PantherSwap, based on Serverless.
+Set of endpoints utilities for PyroSwap, based on Serverless.
 
 ## Dependencies
 

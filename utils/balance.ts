@@ -1,11 +1,11 @@
-import { Pair, TokenAmount } from "@pancakeswap-libs/sdk";
+import { Pair, TokenAmount } from "@pyroswap/sdk";
 import BigNumber from "bignumber.js";
 import bep20ABI from "./abis/bep20.json";
 import pairABI from "./abis/pair.json";
 import masterChefABI from "./abis/masterchef.json";
 import smartChefABI from "./abis/smartchef.json";
 import { getContract, getWeb3 } from "./web3";
-import { CAKE, CAKE_BNB_FARM, CAKE_BNB_TOKEN, CAKE_TOKEN, MASTERCHEF_CONTRACT, WBNB_TOKEN } from "./constants";
+import { CAKE, CAKE_ETH_FARM, CAKE_ETH_TOKEN, CAKE_TOKEN, MASTERCHEF_CONTRACT, WETH_TOKEN } from "./constants";
 import { pools } from "./pools";
 import { multicall } from "./multicall";
 
@@ -29,27 +29,27 @@ export const getTotalStaked = async (address: string, block: string): Promise<nu
   }
 
   try {
-    // CAKE-BNB farm.
+    // CAKE-ETH farm.
     const masterContract = getContract(masterChefABI, MASTERCHEF_CONTRACT, true);
-    const cakeBnbContract = getContract(pairABI, CAKE_BNB_FARM, true);
-    const totalSupplyLP = await cakeBnbContract.methods.totalSupply().call(undefined, blockNumber);
-    const reservesLP = await cakeBnbContract.methods.getReserves().call(undefined, blockNumber);
-    const cakeBnbBalance: UserInfoResult = await masterContract.methods
+    const cakeEthContract = getContract(pairABI, CAKE_ETH_FARM, true);
+    const totalSupplyLP = await cakeEthContract.methods.totalSupply().call(undefined, blockNumber);
+    const reservesLP = await cakeEthContract.methods.getReserves().call(undefined, blockNumber);
+    const cakeEthBalance: UserInfoResult = await masterContract.methods
       .userInfo(1, address)
       .call(undefined, blockNumber);
     const pair: Pair = new Pair(
       new TokenAmount(CAKE_TOKEN, reservesLP._reserve0.toString()),
-      new TokenAmount(WBNB_TOKEN, reservesLP._reserve1.toString())
+      new TokenAmount(WETH_TOKEN, reservesLP._reserve1.toString())
     );
     const cakeLPBalance = pair.getLiquidityValue(
       pair.token0,
-      new TokenAmount(CAKE_BNB_TOKEN, totalSupplyLP.toString()),
-      new TokenAmount(CAKE_BNB_TOKEN, cakeBnbBalance.amount.toString()),
+      new TokenAmount(CAKE_ETH_TOKEN, totalSupplyLP.toString()),
+      new TokenAmount(CAKE_ETH_TOKEN, cakeEthBalance.amount.toString()),
       false
     );
     balance = balance.plus(new BigNumber(cakeLPBalance.toSignificant(18)).times(1e18));
   } catch (error) {
-    console.error(`CAKE-BNB LP error: ${error}`);
+    console.error(`CAKE-ETH LP error: ${error}`);
   }
 
   try {

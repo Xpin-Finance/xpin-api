@@ -128,10 +128,10 @@ export const getIssueIndex = async (): Promise<number | { error: string; errorMe
 
 export const getTicketPrice = (index: number): number => {
   if (index <= 4) {
-    return 20;
+    return 1;
   }
 
-  return 5;
+  return 1;
 };
 
 /**
